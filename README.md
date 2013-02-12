@@ -6,6 +6,12 @@ This is a framework for building <a href="http://docs.splunk.com/Documentation/S
 
 It contains an example Modular Input for JMS that you can use as a practical reference to follow.
 
+## Universal Forwarder
+
+When creating deploying a MI using deployment server note the following:
+
+* MI relies on Python and will not work with a universal forwarder. You'll have to install Python on the forwarder. See <a href="hhttp://docs.splunk.com/Documentation/Splunk/latest/Deploy/Introducingtheuniversalforwarder#Scripted_inputs_and_Python">Scripted inputs and Python</a>
+
 
 ## Contact
 
