@@ -7,6 +7,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -67,22 +69,35 @@ public class JMSModularInput extends ModularInput {
 			for (Stanza stanza : input.getStanzas()) {
 
 				String name = stanza.getName();
+				
+				if (name!= null) {
 
-				if (name != null && name.startsWith("jms://queue/")) {
+					// Pattern match on the format of jms://(destination type)/<server:>/(destination)
+					Pattern pattern = Pattern.compile("jms:\\/\\/(\\w+)\\/(\\S+:)?(.*)");
+					Matcher matcher = pattern.matcher(name);
 
-					startMessageReceiverThread(name, name.substring(12),
-							stanza.getParams(), DestinationType.QUEUE,
-							validationConnectionMode);
-
-				}
-
-				else if (name != null && name.startsWith("jms://topic/")) {
-
-					startMessageReceiverThread(name, name.substring(12),
-							stanza.getParams(), DestinationType.TOPIC,
-							validationConnectionMode);
-				} else {
-					logger.error("Invalid stanza name : " + name);
+					// find the match and extract the groups
+					if(matcher.find()) {
+						String destinationType = matcher.group(1);
+						String destination = matcher.group(3);
+						
+						if (destinationType.equals("queue")){
+							startMessageReceiverThread(name, destination,
+									stanza.getParams(), DestinationType.QUEUE,
+									validationConnectionMode);
+						}
+						else if (destinationType.equals("topic")) {
+							startMessageReceiverThread(name, destination,
+									stanza.getParams(), DestinationType.TOPIC,
+									validationConnectionMode);
+						}else {
+							logger.error("Unknown destination type : " + destinationType);
+							System.exit(2);
+						}
+					}
+					
+				}else {
+					logger.error("Stanza name is missing");
 					System.exit(2);
 				}
 
