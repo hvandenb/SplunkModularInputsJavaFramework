@@ -41,6 +41,11 @@ import com.splunk.modinput.Validation;
 import com.splunk.modinput.ValidationError;
 import com.splunk.modinput.Scheme.StreamingMode;
 
+/**
+ * 
+ * @author henrivandenbulk
+ *
+ */
 public class JMSModularInput extends ModularInput {
 
 	public enum DestinationType {
@@ -249,7 +254,7 @@ public class JMSModularInput extends ModularInput {
 				String userJNDIPropertiesString, String clientID,
 				String destinationUser, String destinationPass) {
 
-			
+			// Check if the input name contains the server name, e.g. queue/server1:destination
 			int instanceTokenIndex = destination.indexOf(':');
 			if(instanceTokenIndex > -1) {
 			  this.destination = destination.substring(instanceTokenIndex+1);
